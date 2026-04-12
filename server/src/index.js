@@ -11,12 +11,24 @@ const { Server }       = require('socket.io');
 const app        = express();
 const httpServer = createServer(app);
 const io         = new Server(httpServer, {
-  cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] }
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://devboard-iota.vercel.app"
+    ],
+    methods: ["GET", "POST"]
+  }
 });
 
 app.set('io', io);
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://devboard-iota.vercel.app"
+  ]
+}));
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
@@ -36,6 +48,6 @@ app.use('/api/tasks',    require('./routes/tasks'));
 
 app.get('/', (req, res) => res.json({ msg: 'DevBoard API is running' }));
 
-httpServer.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
+httpServer.listen(process.env.PORT || 10000, () =>
+  console.log(`Server running on port ${process.env.PORT || 10000}`)
 );
