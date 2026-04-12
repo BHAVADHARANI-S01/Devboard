@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
+const API = 'https://devboard-tfen.onrender.com';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
@@ -16,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await axios.post(
-      'https://devboard-tfen.onrender.com/api/auth/login',
+      `${API}/api/auth/login`,
       { email, password }
     );
     localStorage.setItem('devboard_user',  JSON.stringify(data.user));
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     const { data } = await axios.post(
-      'https://devboard-tfen.onrender.com/api/auth/register',
+      `${API}/api/auth/register`,
       { name, email, password }
     );
     localStorage.setItem('devboard_user',  JSON.stringify(data.user));
