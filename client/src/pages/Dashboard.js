@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import toast from "react-hot-toast";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://devboard-tfen.onrender.com/api";
 
 const api = {
   get: (path, token) =>

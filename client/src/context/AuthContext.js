@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await axios.post(
-      'http://localhost:5000/api/auth/login',
+      'https://devboard-tfen.onrender.com/api/auth/login',
       { email, password }
     );
     localStorage.setItem('devboard_user',  JSON.stringify(data.user));
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     const { data } = await axios.post(
-      'http://localhost:5000/api/auth/register',
+      'https://devboard-tfen.onrender.com/api/auth/register',
       { name, email, password }
     );
     localStorage.setItem('devboard_user',  JSON.stringify(data.user));

@@ -18,7 +18,7 @@ const VerifyEmail = () => {
       return;
     }
 
-    axios.get(`http://localhost:5000/api/auth/verify-email?token=${token}`)
+    axios.get(`https://devboard-tfen.onrender.com/api/auth/verify-email?token=${token}`)
       .then((res) => {
         setStatus("success");
         setMessage(res.data.msg);

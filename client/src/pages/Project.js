@@ -21,7 +21,7 @@ import {
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Filler);
 
 const DEFAULT_TIME = 25 * 60;
-const SOCKET_URL   = "http://localhost:5000";
+const SOCKET_URL   = "https://devboard-tfen.onrender.com";
 
 const Project = () => {
   const { id }       = useParams();
@@ -84,7 +84,7 @@ const Project = () => {
   const fetchTasks = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/tasks/project/${id}`,
+        `https://devboard-tfen.onrender.com/api/tasks/project/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTasks(res.data);
@@ -109,7 +109,7 @@ const Project = () => {
             toast.success("Pomodoro done! Take a break. 🍅");
             if (activeTask) {
               axios.patch(
-                `http://localhost:5000/api/tasks/${activeTask._id}`,
+                `https://devboard-tfen.onrender.com/api/tasks/${activeTask._id}`,
                 { pomodoroTime: (activeTask.pomodoroTime || 0) + inputMinutes },
                 { headers: { Authorization: `Bearer ${token}` } }
               );
@@ -131,7 +131,7 @@ const Project = () => {
     if (!title.trim()) { toast.error("Task title required"); return; }
     try {
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        "https://devboard-tfen.onrender.com/api/tasks",
         { title, project: id, status: "todo", priority },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -146,7 +146,7 @@ const Project = () => {
     e.stopPropagation();
     try {
       await axios.delete(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://devboard-tfen.onrender.com/api/tasks/${taskId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch {
@@ -164,7 +164,7 @@ const Project = () => {
     );
     try {
       await axios.patch(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://devboard-tfen.onrender.com/api/tasks/${taskId}`,
         { status: newStatus, order: result.destination.index },
         { headers: { Authorization: `Bearer ${token}` } }
       );
