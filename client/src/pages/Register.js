@@ -65,7 +65,7 @@ const Register = () => {
               <input
                 type="text" value={name} onChange={(e) => setName(e.target.value)}
                 onFocus={() => setFocused("name")} onBlur={() => setFocused("")}
-                required placeholder="Bhavadharani" style={inputStyle("name")}
+                required placeholder="Name" style={inputStyle("name")}
               />
             </div>
 
