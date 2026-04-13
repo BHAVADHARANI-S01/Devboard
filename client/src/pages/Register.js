@@ -14,7 +14,7 @@ const Register = () => {
   const [focused, setFocused]   = useState("");
   const [done, setDone]         = useState(false);
 
-  const { } = useAuth();
+  useAuth();
   const navigate     = useNavigate();
   const t            = useTheme();
 

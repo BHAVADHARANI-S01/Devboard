@@ -14,7 +14,8 @@ const io         = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:3000",
-      "https://devboard-iota.vercel.app"
+      "https://devboard-iota.vercel.app",
+      "https://genuine-sunburst-6802ec.netlify.app"
     ],
     methods: ["GET", "POST"]
   }
@@ -25,7 +26,8 @@ app.set('io', io);
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://devboard-iota.vercel.app"
+    "https://devboard-iota.vercel.app",
+    "https://genuine-sunburst-6802ec.netlify.app"
   ]
 }));
 
