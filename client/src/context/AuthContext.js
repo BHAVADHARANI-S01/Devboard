@@ -2,8 +2,13 @@ import { createContext, useContext, useState } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
-
 const API = 'https://devboard-tfen.onrender.com';
+
+// Axios instance with 60s timeout (Render cold start can take 30–60s)
+const apiClient = axios.create({
+  baseURL: API,
+  timeout: 60000,
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -17,11 +22,8 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = async (email, password) => {
-    const { data } = await axios.post(
-      `${API}/api/auth/login`,
-      { email, password }
-    );
-    localStorage.setItem('devboard_user',  JSON.stringify(data.user));
+    const { data } = await apiClient.post('/api/auth/login', { email, password });
+    localStorage.setItem('devboard_user', JSON.stringify(data.user));
     localStorage.setItem('devboard_token', data.token);
     setUser(data.user);
     setToken(data.token);
@@ -29,14 +31,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password) => {
-    const { data } = await axios.post(
-      `${API}/api/auth/register`,
-      { name, email, password }
-    );
-    localStorage.setItem('devboard_user',  JSON.stringify(data.user));
-    localStorage.setItem('devboard_token', data.token);
-    setUser(data.user);
-    setToken(data.token);
+    const { data } = await apiClient.post('/api/auth/register', { name, email, password });
+    // Registration only returns a success message (email verification flow)
+    // Do NOT store user/token here — user must verify email first
     return data;
   };
 

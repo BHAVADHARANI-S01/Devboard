@@ -9,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
   const [focused, setFocused]   = useState("");
+  const [waking, setWaking]     = useState(false);  // NEW: cold start indicator
 
   const { login } = useAuth();
   const navigate  = useNavigate();
@@ -17,14 +18,26 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setWaking(false);
+
+    // NEW: Show "waking server" message after 4s if still loading
+    const wakeTimer = setTimeout(() => setWaking(true), 4000);
+
     try {
       await login(email, password);
+      clearTimeout(wakeTimer);
       toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err.response?.data?.msg || "Login failed");
+      clearTimeout(wakeTimer);
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        toast.error("Server is taking too long. Please try again.");
+      } else {
+        toast.error(err.response?.data?.msg || "Login failed. Check your credentials.");
+      }
     } finally {
       setLoading(false);
+      setWaking(false);
     }
   };
 
@@ -71,6 +84,7 @@ const Login = () => {
                   borderRadius: "10px", fontSize: "15px",
                   outline: "none", transition: "border-color 0.2s",
                   boxShadow: focused === "email" ? `0 0 0 3px ${t.accentLight}` : "none",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
@@ -95,9 +109,17 @@ const Login = () => {
                   borderRadius: "10px", fontSize: "15px",
                   outline: "none", transition: "border-color 0.2s",
                   boxShadow: focused === "password" ? `0 0 0 3px ${t.accentLight}` : "none",
+                  boxSizing: "border-box",
                 }}
               />
             </div>
+
+            {/* NEW: Cold start message */}
+            {waking && (
+              <p style={{ fontSize: "13px", color: t.textMuted, marginBottom: "12px", textAlign: "center" }}>
+                ⏳ Server is waking up, please wait a moment...
+              </p>
+            )}
 
             {/* BUTTON */}
             <button

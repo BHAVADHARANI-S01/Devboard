@@ -4,8 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import toast from "react-hot-toast";
 
-const API = 'https://devboard-tfen.onrender.com';
-
 const Register = () => {
   const [name, setName]         = useState("");
   const [email, setEmail]       = useState("");
@@ -13,35 +11,36 @@ const Register = () => {
   const [loading, setLoading]   = useState(false);
   const [focused, setFocused]   = useState("");
   const [done, setDone]         = useState(false);
+  const [waking, setWaking]     = useState(false);  // NEW: cold start indicator
 
-  useAuth();
-  const navigate     = useNavigate();
-  const t            = useTheme();
+  const { register } = useAuth();  // FIX: use register from AuthContext
+  const navigate = useNavigate();
+  const t        = useTheme();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setWaking(false);
+
+    // NEW: Show "waking server" message after 4s if still loading
+    const wakeTimer = setTimeout(() => setWaking(true), 4000);
+
     try {
-      const res = await fetch(`${API}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.msg || "Registration failed");
-        return;
-      }
-
+      await register(name, email, password);  // FIX: use AuthContext register
+      clearTimeout(wakeTimer);
       setDone(true);
       toast.success("Check your email to verify your account!");
-
     } catch (err) {
+      clearTimeout(wakeTimer);
       console.error("Register error:", err);
-      toast.error("Registration failed. Please try again.");
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        toast.error("Server is taking too long. Please try again.");
+      } else {
+        toast.error(err.response?.data?.msg || "Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
+      setWaking(false);
     }
   };
 
@@ -53,6 +52,7 @@ const Register = () => {
     outline: "none", transition: "all 0.2s",
     boxShadow: focused === field ? `0 0 0 3px ${t.accentLight}` : "none",
     fontFamily: "'Outfit', sans-serif",
+    boxSizing: "border-box",
   });
 
   if (done) {
@@ -140,6 +140,13 @@ const Register = () => {
                 style={inputStyle("password")}
               />
             </div>
+
+            {/* NEW: Cold start message */}
+            {waking && (
+              <p style={{ fontSize: "13px", color: t.textMuted, marginBottom: "12px", textAlign: "center" }}>
+                ⏳ Server is waking up, please wait a moment...
+              </p>
+            )}
 
             <button
               type="submit" disabled={loading}
